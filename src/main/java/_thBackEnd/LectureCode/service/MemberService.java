@@ -14,23 +14,17 @@ public class MemberService {
     private final JwtUtility jwtUtility;
 
     public Member tokenToMember(String token) {
-        return memberRepository.findByUserId(jwtUtility.validateToken(token).getSubject());
+        return memberRepository.findByUserId(jwtUtility.getClaimsFromToken(token).getSubject());
     }
 
-    public Member changeName(Long id, String newNickname) {
-        Member member = memberRepository.findByid(id);
-        if (member == null) {
-            return null;
-        }
-        member.setNickname(newNickname);
-        return member;
-    }
-
-    public Member singUp(String userId, String password) {
+    public Member singUp(String userId, String password, String nickname) {
         if (memberRepository.findByUserId(userId) != null) {
             return null;
         }
-        return memberRepository.save(new Member(userId, password));
+        Member member = new Member(userId, password);
+        member.setNickname(nickname);
+        memberRepository.save(member);
+        return member;
     }
 
     public Member login(String userId, String password) {
@@ -41,12 +35,28 @@ public class MemberService {
         return null;
     }
 
+
+    public Member changeName(String token, String userId, String newNickname) {
+        if (!jwtUtility.validateToken(token)) {
+            return null;
+        }
+        Member member = memberRepository.findByUserId(userId);
+        if (member == null) {
+            return null;
+        }
+        member.setNickname(newNickname);
+        return member;
+    }
+
     public Member findByUserId(String userId) {
         return memberRepository.findByUserId(userId);
     }
 
-    public boolean deleteMember(Long id) {
-        Member member = memberRepository.findByid(id);
+    public boolean deleteMember(String token, String userId) {
+        if (!jwtUtility.validateToken(token)) {
+            return false;
+        }
+        Member member = memberRepository.findByUserId(userId);
         if (member == null) {
             return false;
         }

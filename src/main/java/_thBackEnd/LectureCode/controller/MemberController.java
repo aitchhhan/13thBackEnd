@@ -15,19 +15,19 @@ public class MemberController {
     private final JwtUtility jwtUtility;
 
     @PostMapping("/member/add")
-    public String addMember(@RequestBody MemberDTO.MemberCreateReq req) {
-        Member member = memberService.singUp(req.getUserId(), req.getPassword());
+    public String addMember(@RequestBody MemberDTO.MemberCreateReq request) {
+        Member member = memberService.singUp(request.getUserId(), request.getPassword(), request.getNickname());
         if (member == null) {
             return null;
         }
         return jwtUtility.generateToken(member.getUserId());
     }
 
-    @PostMapping("/login")
-    public String Login(@RequestBody MemberDTO.LoginReq req){
-        Member loginMember = memberService.login(req.getUserId(), req.getPassword());
-        if(loginMember!=null){
-            return jwtUtility.generateToken(loginMember.getUserId());
+    @PostMapping("/member/login")
+    public String login(@RequestBody MemberDTO.LoginReq request){
+        Member member = memberService.login(request.getUserId(), request.getPassword());
+        if (member != null) {
+            return jwtUtility.generateToken(member.getUserId());
         }
         return null;
     }
@@ -39,13 +39,13 @@ public class MemberController {
     }
 
     @PutMapping("/member")
-    public MemberDTO.MemberRes changeMemberName(@RequestBody MemberDTO.MemberUpdateReq req){
-        Member findMember = memberService.changeName(req.getId(), req.getNickname());
+    public MemberDTO.MemberRes changeMemberName(@RequestHeader("Authorization") String bearerToken, @RequestBody MemberDTO.MemberUpdateReq request){
+        Member findMember = memberService.changeName(bearerToken, request.getUserId(), request.getNickname());
         return new MemberDTO.MemberRes(findMember.getUserId(),findMember.getNickname());
     }
 
     @DeleteMapping("/member")
-    public void deleteMember(@RequestBody MemberDTO.DeleteReq req){
-        memberService.deleteMember(req.getId());
+    public void deleteMember(@RequestHeader("Authorization") String bearerToken, @RequestBody MemberDTO.DeleteReq request){
+        memberService.deleteMember(bearerToken, request.getUserId());
     }
 }

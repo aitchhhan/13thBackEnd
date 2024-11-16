@@ -14,14 +14,12 @@ public class Member {
     private String password;
     @Setter
     private String nickname;
-    private String major;
-    private int studentNumber;
 
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public Member(String userId, String password) {
         this.userId = userId;
-        this.password = password;
+        this.setPassword(password);
     }
 
     public void setPassword(String password) {

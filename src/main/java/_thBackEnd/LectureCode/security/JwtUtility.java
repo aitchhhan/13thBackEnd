@@ -8,29 +8,30 @@ import java.util.Date;
 
 @Service
 public class JwtUtility {
-    private final String secret = "yourSecretKey";
+    private final String jwtKey = "1234567812345678123456781234567812345678123456781234567812345678";
 
     private static final long expirationTime = 1000 * 60 * 60; // 1시간
 
     // JWT 생성
-    public String generateToken(String memberId) {
+    public String generateToken(String userId) {
         return Jwts.builder()
-                .setSubject(memberId)
+                .setSubject(userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(SignatureAlgorithm.HS512, secret.getBytes(StandardCharsets.UTF_8))
+                .signWith(SignatureAlgorithm.HS512, jwtKey.getBytes(StandardCharsets.UTF_8))
                 .compact();
     }
 
     // JWT 유효성 검사
-    public Claims validateToken(String token) {
+    public Boolean validateToken(String token) {
         try {
             // 토큰 파싱 및 클레임 반환
-            return Jwts.parserBuilder()
-                    .setSigningKey(secret.getBytes(StandardCharsets.UTF_8))
+            Jwts.parserBuilder()
+                    .setSigningKey(jwtKey.getBytes(StandardCharsets.UTF_8))
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
+            return true;
         } catch (SignatureException e) {
             // JWT 토큰 잘못된 서명
             System.out.println("SignatureException");
@@ -48,5 +49,9 @@ public class JwtUtility {
             System.out.println("IllegalArgumentException");
         }
         return null; // 유효하지 않은 경우 null 반환
+    }
+
+    public Claims getClaimsFromToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(jwtKey).build().parseClaimsJws(token).getBody(); // 토큰을 파싱하여 클레임을 추출
     }
 }
