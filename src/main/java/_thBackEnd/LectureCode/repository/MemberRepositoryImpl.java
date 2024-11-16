@@ -1,60 +1,54 @@
 package _thBackEnd.LectureCode.repository;
 
 import _thBackEnd.LectureCode.domain.Member;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Repository
-public class MemberRepositoryImpl implements MemberRepository{
+@RequiredArgsConstructor
+public class MemberRepositoryImpl implements MemberRepository {
 
-    private static final Map<Long, Member> local = new HashMap<>();
+    private final EntityManager em;
 
     @Override
     public Member save(Member member) {
-        local.put(member.getId(), member);
+        em.persist(member);
         return member;
     }
 
     @Override
-    public Member findByid(Long id) {
-        return local.get(id);
+    public Member findById(Long id) {
+        return em.find(Member.class, id);
     }
 
     @Override
     public Member findByUserId(String userId) {
-        for (Member member : local.values()) {
-            if (member.getUserId().equals(userId)) {
-                return member;
-            }
+        try {
+            return em.createQuery("select m from Member m where m.userId = :userId", Member.class)
+                    .setParameter("userId", userId).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
         }
-        return null;
     }
 
     @Override
     public List<Member> findAll() {
-
-        return new ArrayList<>(local.values());
+        return em.createQuery("select m from Member m", Member.class)
+                .getResultList();
     }
 
     @Override
     public void deleteMember(Member member) {
-        local.remove(member.getId());
+        em.remove(member);
     }
 
     @Override
     public List<Member> findByName(String name) {
-        List<Member> findMembers = new ArrayList<>();
-
-        for (Member member : local.values()) {
-            if (member.getNickname().equals(name)) {
-                findMembers.add(member);
-            }
-        }
-
-        return findMembers;
+        return em.createQuery("select m from Member m where m.nickname = :name", Member.class)
+                .setParameter("name", name).getResultList();
     }
 }

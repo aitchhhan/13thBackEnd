@@ -5,18 +5,21 @@ import _thBackEnd.LectureCode.repository.MemberRepository;
 import _thBackEnd.LectureCode.security.JwtUtility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberService {
 
     private final MemberRepository memberRepository;
     private final JwtUtility jwtUtility;
 
-    public Member tokenToMember(String token) {
+    public Member tokenToMember(String token){
         return memberRepository.findByUserId(jwtUtility.getClaimsFromToken(token).getSubject());
     }
 
+    @Transactional
     public Member singUp(String userId, String password, String nickname) {
         if (memberRepository.findByUserId(userId) != null) {
             return null;
@@ -35,7 +38,7 @@ public class MemberService {
         return null;
     }
 
-
+    @Transactional
     public Member changeName(String token, String userId, String newNickname) {
         if (!jwtUtility.validateToken(token)) {
             return null;
@@ -52,6 +55,7 @@ public class MemberService {
         return memberRepository.findByUserId(userId);
     }
 
+    @Transactional
     public boolean deleteMember(String token, String userId) {
         if (!jwtUtility.validateToken(token)) {
             return false;
