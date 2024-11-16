@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class MemberRepositoryImpl implements MemberRepository{
+public class MemoryMemberRepository implements MemberRepository{
 
     private static final Map<Long, Member> local = new HashMap<>();
 
@@ -20,7 +20,7 @@ public class MemberRepositoryImpl implements MemberRepository{
     }
 
     @Override
-    public Member findByid(Long id) {
+    public Member findById(Long id) {
         return local.get(id);
     }
 
