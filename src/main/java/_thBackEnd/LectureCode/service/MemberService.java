@@ -41,6 +41,10 @@ public class MemberService {
         return null;
     }
 
+    public Member findByUserId(String userId) {
+        return memberRepository.findByUserId(userId);
+    }
+
     public boolean deleteMember(Long id) {
         Member member = memberRepository.findByid(id);
         if (member == null) {
