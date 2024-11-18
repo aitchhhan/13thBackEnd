@@ -39,10 +39,7 @@ public class MemberService {
     }
 
     @Transactional
-    public Member changeName(String token, String userId, String newNickname) {
-        if (!jwtUtility.validateToken(token)) {
-            return null;
-        }
+    public Member changeName(String userId, String newNickname) {
         Member member = memberRepository.findByUserId(userId);
         if (member == null) {
             return null;
@@ -56,10 +53,7 @@ public class MemberService {
     }
 
     @Transactional
-    public boolean deleteMember(String token, String userId) {
-        if (!jwtUtility.validateToken(token)) {
-            return false;
-        }
+    public boolean deleteMember(String userId) {
         Member member = memberRepository.findByUserId(userId);
         if (member == null) {
             return false;

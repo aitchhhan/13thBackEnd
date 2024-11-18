@@ -17,7 +17,6 @@ public class ArticleService {
 
     private final ArticleRepository articleRepository;
     private final MemberService memberService;
-    private final JwtUtility jwtUtility;
 
     @Transactional
     public Article addArticle(String writerId, String title, String content) {
