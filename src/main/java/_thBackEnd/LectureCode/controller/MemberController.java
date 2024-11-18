@@ -39,13 +39,19 @@ public class MemberController {
     }
 
     @PutMapping("/member")
-    public MemberDTO.MemberRes changeMemberName(@RequestHeader("Authorization") String bearerToken, @RequestBody MemberDTO.MemberUpdateReq request){
-        Member findMember = memberService.changeName(bearerToken, request.getUserId(), request.getNickname());
+    public MemberDTO.MemberRes changeMemberName(@RequestHeader("Authorization") String token, @RequestBody MemberDTO.MemberUpdateReq request){
+        if (!jwtUtility.validateToken(token)) {
+            return null;
+        }
+        Member findMember = memberService.changeName(request.getUserId(), request.getNickname());
         return new MemberDTO.MemberRes(findMember.getUserId(),findMember.getNickname());
     }
 
     @DeleteMapping("/member")
-    public void deleteMember(@RequestHeader("Authorization") String bearerToken, @RequestBody MemberDTO.DeleteReq request){
-        memberService.deleteMember(bearerToken, request.getUserId());
+    public void deleteMember(@RequestHeader("Authorization") String token, @RequestBody MemberDTO.DeleteReq request){
+        if (!jwtUtility.validateToken(token)) {
+            return ;
+        }
+        memberService.deleteMember(request.getUserId());
     }
 }
