@@ -32,14 +32,11 @@ public class JwtUtility {
     }
 
     // JWT 유효성 검사
-    public Boolean validateToken(String token) {
+    public Boolean validateToken(String bearerToken) {
         try {
-            // 토큰 파싱 및 클레임 반환
-            Jwts.parserBuilder()
-                    .setSigningKey(jwtKey)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
+            if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
+                return false;
+            }
             return true;
         } catch (SignatureException e) {
             System.out.println("Invalid JWT signature");
@@ -54,6 +51,28 @@ public class JwtUtility {
         }
         return false;
     }
+//public Boolean validateToken(String token) {
+//        try {
+//            // 토큰 파싱 및 클레임 반환
+//            Jwts.parserBuilder()
+//                    .setSigningKey(jwtKey)
+//                    .build()
+//                    .parseClaimsJws(token)
+//                    .getBody();
+//            return true;
+//        } catch (SignatureException e) {
+//            System.out.println("Invalid JWT signature");
+//        } catch (MalformedJwtException e) {
+//            System.out.println("Malformed JWT token");
+//        } catch (ExpiredJwtException e) {
+//            System.out.println("Expired JWT token");
+//        } catch (UnsupportedJwtException e) {
+//            System.out.println("Unsupported JWT token");
+//        } catch (IllegalArgumentException e) {
+//            System.out.println("JWT claims string is empty");
+//        }
+//        return false;
+//    }
 
     // 토큰에서 클레임 추출
     public Claims getClaimsFromToken(String token) {
