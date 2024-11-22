@@ -26,10 +26,10 @@ public class MemberController {
     @PostMapping("/member/login")
     public String login(@RequestBody MemberDTO.LoginReq request){
         Member member = memberService.login(request.getUserId(), request.getPassword());
-        if (member != null) {
-            return jwtUtility.generateToken(member.getUserId());
+        if (member == null) {
+            return null;
         }
-        return null;
+        return jwtUtility.generateToken(member.getUserId());
     }
 
     @GetMapping("/member/{userId}")
