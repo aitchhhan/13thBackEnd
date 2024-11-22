@@ -29,10 +29,10 @@ public class MemberService {
 
     public Member login(String userId, String password) {
         Member member = memberRepository.findByUserId(userId);
-        if (member != null && member.checkPassword(password)) {
-            return member;
+        if (member == null || !member.checkPassword(password)) {
+            return null;
         }
-        return null;
+        return member;
     }
 
 
