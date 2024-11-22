@@ -36,16 +36,4 @@ public class CommentRepositoryImpl implements CommentRepository {
         return em.createQuery("select c from Comment c where c.article = :article", Comment.class)
                 .setParameter("article",article).getResultList();
     }
-
-    @Override
-    public List<Comment> findMemberComment(Member member) {
-        return em.createQuery("select c from Comment c where c.writer = :member", Comment.class)
-                .setParameter("member",member).getResultList();
-    }
-
-    @Override
-    public List<Article> findMemberCommentArticle(Member member) {
-        return em.createQuery("select DISTINCT c.article from Comment c where c.writer = :member", Article.class)
-                .setParameter("member",member).getResultList();
-    }
 }

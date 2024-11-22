@@ -2,9 +2,11 @@ package _thBackEnd.LectureCode.controller;
 
 import _thBackEnd.LectureCode.DTO.MemberDTO;
 import _thBackEnd.LectureCode.domain.Member;
+import _thBackEnd.LectureCode.exception.MemberException;
 import _thBackEnd.LectureCode.security.JwtUtility;
 import _thBackEnd.LectureCode.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,27 +17,27 @@ public class MemberController {
     private final JwtUtility jwtUtility;
 
     @PostMapping("/member/add")
-    public String addMember(@RequestBody MemberDTO.MemberCreateReq request) {
+    public ResponseEntity<String> addMember(@RequestBody MemberDTO.MemberCreateReq request) {
         Member member = memberService.singUp(request.getUserId(), request.getPassword(), request.getNickname());
-        if (member == null) {
-            return null;
-        }
-        return jwtUtility.generateToken(member.getUserId());
+//        if (member == null) { // member가 null이 될 경우의 수가 없으므로 삭제
+//            return null;
+//        }
+        return ResponseEntity.ok(jwtUtility.generateToken(member.getUserId()));
     }
 
     @PostMapping("/member/login")
-    public String login(@RequestBody MemberDTO.LoginReq request){
+    public ResponseEntity<String> login(@RequestBody MemberDTO.LoginReq request){
         Member member = memberService.login(request.getUserId(), request.getPassword());
-        if (member != null) {
-            return jwtUtility.generateToken(member.getUserId());
-        }
-        return null;
+//        if (member == null) { // member가 null이 될 경우의 수가 없으므로 삭제
+//            return null;
+//        }
+        return ResponseEntity.ok(jwtUtility.generateToken(member.getUserId()));
     }
 
     @GetMapping("/member/{userId}")
-    public MemberDTO.MemberRes getMember(@PathVariable("userId") String userId){
+    public ResponseEntity<MemberDTO.MemberRes> getMember(@PathVariable("userId") String userId){
         Member member = memberService.findByUserId(userId);
-        return new MemberDTO.MemberRes(member.getUserId(),member.getNickname());
+        return ResponseEntity.ok(new MemberDTO.MemberRes(member.getUserId(),member.getNickname()));
     }
 
     @PutMapping("/member")

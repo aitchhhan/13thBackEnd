@@ -11,6 +11,4 @@ public interface CommentRepository {
     Comment findById(Long id);
     void deleteComment(Comment comment);
     List<Comment> findArticleComment(Article article);
-    List<Comment> findMemberComment(Member member);
-    List<Article> findMemberCommentArticle(Member member);
 }

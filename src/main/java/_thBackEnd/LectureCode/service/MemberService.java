@@ -1,6 +1,7 @@
 package _thBackEnd.LectureCode.service;
 
 import _thBackEnd.LectureCode.domain.Member;
+import _thBackEnd.LectureCode.exception.MemberException;
 import _thBackEnd.LectureCode.repository.MemberRepository;
 import _thBackEnd.LectureCode.security.JwtUtility;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class MemberService {
     @Transactional
     public Member singUp(String userId, String password, String nickname) {
         if (memberRepository.findByUserId(userId) != null) {
-            return null;
+            throw new MemberException(409, "이미 있는 userId");
         }
         Member member = new Member(userId, password);
         member.setNickname(nickname);
@@ -30,19 +31,27 @@ public class MemberService {
         return member;
     }
 
+//    public Member login(String userId, String password) {
+//        Member member = memberRepository.findByUserId(userId);
+//        if (member != null && member.checkPassword(password)) {
+//            return member;
+//        }
+//    }
+
     public Member login(String userId, String password) {
         Member member = memberRepository.findByUserId(userId);
-        if (member != null && member.checkPassword(password)) {
-            return member;
+        if (member == null || !member.checkPassword(password)) {
+            // 딮하게 예외 처리를 한다면 && 연산으로 묶지 않고 따로 따로 예외 처리를 해주면 됨
+            throw new MemberException(400, "존재하지 않거나, 틀린 비밀번호");
         }
-        return null;
+        return member;
     }
 
     @Transactional
     public Member changeName(String userId, String newNickname) {
         Member member = memberRepository.findByUserId(userId);
         if (member == null) {
-            return null;
+            throw new MemberException(400, "없는 userId");
         }
         member.setNickname(newNickname);
         return member;
@@ -56,7 +65,7 @@ public class MemberService {
     public boolean deleteMember(String userId) {
         Member member = memberRepository.findByUserId(userId);
         if (member == null) {
-            return false;
+            throw new MemberException(400, "없는 userId");
         }
         memberRepository.deleteMember(member);
         return true;
