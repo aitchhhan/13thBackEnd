@@ -3,7 +3,6 @@ package _thBackEnd.LectureCode.service;
 import _thBackEnd.LectureCode.domain.Article;
 import _thBackEnd.LectureCode.domain.Member;
 import _thBackEnd.LectureCode.repository.ArticleRepository;
-import _thBackEnd.LectureCode.security.JwtUtility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,15 +44,15 @@ public class ArticleService {
         }
     }
 
-    public Article getArticle(Long articleId){
+    public Article findArticle(Long articleId){
         return articleRepository.findById(articleId);
     }
 
-    public List<Article> getAllArticle(){
+    public List<Article> findAllArticle(){
         return articleRepository.findAll();
     }
 
-    public List<Article> getUserArticles(String memberId){
+    public List<Article> findUserArticles(String memberId){
         Member member = memberService.findByUserId(memberId);
         return articleRepository.findUserAll(member.getId());
     }

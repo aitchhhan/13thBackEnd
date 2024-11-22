@@ -17,42 +17,42 @@ public class ArticleController {
     private final JwtUtility jwtUtility;
 
     @PostMapping("/article/add")
-    public ArticleDTO.ResponseArticle createArticle(@RequestHeader("Authorization") String token, @RequestBody ArticleDTO.addArticleReq request){
-        if (!jwtUtility.validateToken(token)) {
+    public ArticleDTO.ResponseArticle createArticle(@RequestHeader("Authorization") String bearerToken, @RequestBody ArticleDTO.addArticleReq request){
+        if (!jwtUtility.validateToken(bearerToken)) {
             return null;
         }
-        String userId = jwtUtility.getClaimsFromToken(token).getSubject();
+        String userId = jwtUtility.getClaimsFromToken(bearerToken).getSubject();
         Article article = articleService.addArticle(userId, request.getTitle(), request.getContent());
         return new ArticleDTO.ResponseArticle(article);
     }
 
     @PutMapping("/article/update")
-    public ArticleDTO.ResponseArticle updateArticle(@RequestHeader("Authorization") String token, @RequestBody ArticleDTO.ArticleReq request){
-        if (!jwtUtility.validateToken(token)) {
+    public ArticleDTO.ResponseArticle updateArticle(@RequestHeader("Authorization") String bearerToken, @RequestBody ArticleDTO.ArticleReq request){
+        if (!jwtUtility.validateToken(bearerToken)) {
             return null;
         }
-        Article article = articleService.updateArticle(request.getArticleId(), request.getTitle(), request.getContent(), token);
+        Article article = articleService.updateArticle(request.getArticleId(), request.getTitle(), request.getContent(), bearerToken);
         return new ArticleDTO.ResponseArticle(article);
     }
 
     @DeleteMapping("/article/{articleId}")
-    public void deleteArticle(@RequestHeader("Authorization") String token, @PathVariable("articleId") Long articleId){
-        if (!jwtUtility.validateToken(token)) {
+    public void deleteArticle(@RequestHeader("Authorization") String bearerToken, @PathVariable("articleId") Long articleId){
+        if (!jwtUtility.validateToken(bearerToken)) {
             return ;
         }
-        articleService.deleteArticle(articleId, token);
+        articleService.deleteArticle(articleId, bearerToken);
     }
 
     @GetMapping("/article/{articleId}")
     public ArticleDTO.ResponseArticle getArticle(@PathVariable("articleId") Long articleId){
-        Article article = articleService.getArticle(articleId);
+        Article article = articleService.findArticle(articleId);
         return new ArticleDTO.ResponseArticle(article);
     }
 
     @GetMapping("/articles/all")
     public List<ArticleDTO.ResponseArticle> allArticleList(){
         List<ArticleDTO.ResponseArticle> responseArticles = new ArrayList<>();
-        for (Article article : articleService.getAllArticle()) {
+        for (Article article : articleService.findAllArticle()) {
             responseArticles.add(new ArticleDTO.ResponseArticle(article));
         }
         return responseArticles;
@@ -61,7 +61,7 @@ public class ArticleController {
     @GetMapping("/articles/all/{memberId}")
     public List<ArticleDTO.ResponseArticle> writerArticleList(@PathVariable("memberId") String memberId){
         List<ArticleDTO.ResponseArticle> responseArticles = new ArrayList<>();
-        for (Article article : articleService.getUserArticles(memberId)) {
+        for (Article article : articleService.findUserArticles(memberId)) {
             responseArticles.add(new ArticleDTO.ResponseArticle(article));
         }
         return responseArticles;
