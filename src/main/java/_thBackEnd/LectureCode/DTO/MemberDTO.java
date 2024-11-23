@@ -14,7 +14,6 @@ public class MemberDTO {
 
     @Data
     public static class MemberUpdateReq {
-        private String userId;
         private String nickname;
     }
 

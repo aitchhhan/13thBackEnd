@@ -36,8 +36,8 @@ public class MemberService {
     }
 
 
-    public Member changeName(String userId, String newNickname) {
-        Member member = memberRepository.findByUserId(userId);
+    public Member changeName(String token, String newNickname) {
+        Member member = tokenToMember(token);
         if (member == null) {
             return null;
         }
