@@ -37,7 +37,7 @@ public class MemberService {
 
 
     public Member changeName(String token, String newNickname) {
-        Member member = tokenToMember(token);
+        Member member = tokenToMember(token); // 본인만 닉네임 바꿀 수 있게 토큰에서 member 추출
         if (member == null) {
             return null;
         }
