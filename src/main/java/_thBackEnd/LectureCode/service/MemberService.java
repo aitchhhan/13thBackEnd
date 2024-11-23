@@ -41,7 +41,7 @@ public class MemberService {
     public Member login(String userId, String password) {
         Member member = memberRepository.findByUserId(userId);
         if (member == null || !member.checkPassword(password)) {
-            // 딮하게 예외 처리를 한다면 && 연산으로 묶지 않고 따로 따로 예외 처리를 해주면 됨
+            // 딮하게 예외 처리를 한다면 || 연산으로 묶지 않고 따로 따로 예외 처리를 해주면 됨
             throw new MemberException(400, "존재하지 않거나, 틀린 비밀번호");
         }
         return member;

@@ -1,5 +1,6 @@
 package _thBackEnd.LectureCode.security;
 
+import _thBackEnd.LectureCode.exception.InvalidJwtException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
@@ -29,12 +30,11 @@ public class JwtUtility {
     }
 
     // JWT 유효성 검사
-    public Boolean validateToken(String bearerToken) {
-        try {
+    public void validateToken(String bearerToken) {
             // 1. Bearer 검증
+        try {
             if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
-                System.out.println("Bearer로 시작하지 않음");
-                return false; // Bearer로 시작하지 않으면 유효하지 않음
+                throw new JwtException("JWT 검증 중 잘못된 인수가 전달되었습니다.");
             }
 
             String pureToken = bearerToken.substring(7); // Bearer 제거
@@ -44,11 +44,8 @@ public class JwtUtility {
                     .setSigningKey(key) // 서명 키 설정
                     .build()
                     .parseClaimsJws(pureToken); // 서명이 유효하지 않거나 변조되었으면 예외 발생
-
-            return true; // 유효한 토큰일 경우 true
-        } catch (JwtException | IllegalArgumentException e) {
-            System.out.println("Jwt 오류");
-            return false; // 서명 검증 실패, 만료, 형식 오류 등이 발생한 경우 false
+        } catch (JwtException e) {
+            throw new JwtException("JWT 검증 실패: " + e.getMessage());
         }
     }
 
