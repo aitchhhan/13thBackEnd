@@ -22,11 +22,11 @@ public class JwtUtility {
     // JWT 생성
     public String generateToken(String userId) {
         return Jwts.builder()
-                .setSubject(userId)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
+                .setSubject(userId) // jwt 주체를 userId로 설정
+                .setIssuedAt(new Date()) // 토큰 생성 시간(시점) 설정
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // 토큰 만료 시간 설정
                 .signWith(key) // Key 객체를 직접 사용
-                .compact();
+                .compact(); // 토큰 생성 및 압축
     }
 
     // JWT 유효성 검사
@@ -51,10 +51,10 @@ public class JwtUtility {
 
     // 토큰에서 클레임 추출
     public Claims getClaimsFromToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        return Jwts.parserBuilder() // 이러한 형태는 JWT에서 클레임을 추출하는 표준적인 방식
+                .setSigningKey(key) // jwt 서명을 검증하기 위해 필요한 비밀 키 설정, jwt를 생성하며 서명할 때 사용했던 키와 동일해야 함
+                .build() // 설정된 파서를 실제로 사용할 수 있는 파서 객체로 만듬
+                .parseClaimsJws(token) // jwt 토큰 파싱하고, 서명의 유효성 검증
+                .getBody(); // 파싱된 jwt의 Payload에서 Claim 추출
     }
 }
