@@ -43,12 +43,12 @@ public class MemberController {
     @PutMapping("/member")
     public ResponseEntity<MemberDTO.MemberRes> changeMemberName(@RequestHeader("Authorization") String token, @RequestBody MemberDTO.MemberUpdateReq request){
         jwtUtility.validateToken(token);
-        Member findMember = memberService.changeName(request.getUserId(), request.getNickname());
+        Member findMember = memberService.changeName(token, request.getNickname());
         return ResponseEntity.ok(new MemberDTO.MemberRes(findMember.getUserId(),findMember.getNickname()));
     }
 
     @DeleteMapping("/member")
-    public ResponseEntity<?> deleteMember(@RequestHeader("Authorization") String token, @RequestBody MemberDTO.DeleteReq request){
+    public ResponseEntity<Boolean> deleteMember(@RequestHeader("Authorization") String token, @RequestBody MemberDTO.DeleteReq request){
         jwtUtility.validateToken(token);
         return ResponseEntity.ok(memberService.deleteMember(request.getUserId()));
     }

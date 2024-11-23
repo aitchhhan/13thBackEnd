@@ -48,9 +48,9 @@ public class MemberService {
     }
 
     @Transactional
-    public Member changeName(String userId, String newNickname) {
-        Member member = memberRepository.findByUserId(userId);
-        if (member == null) {
+    public Member changeName(String token, String newNickname) {
+        Member member = tokenToMember(token); // 본인만 닉네임 바꿀 수 있게 토큰에서 member 추출
+        if (member == null) { // 어쩌면 이 부분은 tokenToMember에서 오류 처리를 하는게 좋을지도?
             throw new MemberException(400, "없는 userId");
         }
         member.setNickname(newNickname);
