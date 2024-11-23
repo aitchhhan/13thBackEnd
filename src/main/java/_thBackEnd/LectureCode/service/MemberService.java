@@ -39,8 +39,8 @@ public class MemberService {
     }
 
     @Transactional
-    public Member changeName(String userId, String newNickname) {
-        Member member = memberRepository.findByUserId(userId);
+    public Member changeName(String token, String newNickname) {
+        Member member = tokenToMember(token); // 본인만 닉네임 바꿀 수 있게 토큰에서 member 추출
         if (member == null) {
             return null;
         }
@@ -48,11 +48,11 @@ public class MemberService {
         return member;
     }
 
+
     public Member findByUserId(String userId) {
         return memberRepository.findByUserId(userId);
     }
 
-    @Transactional
     public boolean deleteMember(String userId) {
         Member member = memberRepository.findByUserId(userId);
         if (member == null) {

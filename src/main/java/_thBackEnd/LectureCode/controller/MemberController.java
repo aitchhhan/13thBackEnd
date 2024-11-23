@@ -43,15 +43,15 @@ public class MemberController {
         if (!jwtUtility.validateToken(token)) {
             return null;
         }
-        Member findMember = memberService.changeName(request.getUserId(), request.getNickname());
+        Member findMember = memberService.changeName(token, request.getNickname());
         return new MemberDTO.MemberRes(findMember.getUserId(),findMember.getNickname());
     }
 
     @DeleteMapping("/member")
-    public void deleteMember(@RequestHeader("Authorization") String token, @RequestBody MemberDTO.DeleteReq request){
+    public Boolean deleteMember(@RequestHeader("Authorization") String token, @RequestBody MemberDTO.DeleteReq request){
         if (!jwtUtility.validateToken(token)) {
-            return ;
+            return false;
         }
-        memberService.deleteMember(request.getUserId());
+        return memberService.deleteMember(request.getUserId());
     }
 }
