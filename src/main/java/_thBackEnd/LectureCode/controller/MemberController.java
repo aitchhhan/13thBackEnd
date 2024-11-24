@@ -20,16 +20,13 @@ public class MemberController {
         if (member == null) {
             return null;
         }
-        return jwtUtility.generateToken(member.getUserId());
+        return memberService.login(member.getUserId(), member.getPassword());
     }
 
     @PostMapping("/member/login")
     public String login(@RequestBody MemberDTO.LoginReq request){
-        Member member = memberService.login(request.getUserId(), request.getPassword());
-        if (member == null) {
-            return null;
-        }
-        return jwtUtility.generateToken(member.getUserId());
+        String token = memberService.login(request.getUserId(), request.getPassword());
+        return jwtUtility.generateToken(token);
     }
 
     @GetMapping("/member/{userId}")
