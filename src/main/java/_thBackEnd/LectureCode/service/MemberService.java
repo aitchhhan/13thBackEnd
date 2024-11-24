@@ -30,12 +30,12 @@ public class MemberService {
         return member;
     }
 
-    public Member login(String userId, String password) {
+    public String login(String userId, String password) {
         Member member = memberRepository.findByUserId(userId);
         if (member == null || !member.checkPassword(password)) {
             return null;
         }
-        return member;
+        return jwtUtility.generateToken(member.getUserId());
     }
 
     @Transactional
