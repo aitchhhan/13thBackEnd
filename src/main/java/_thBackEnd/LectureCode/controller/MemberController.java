@@ -5,7 +5,10 @@ import _thBackEnd.LectureCode.domain.Member;
 import _thBackEnd.LectureCode.exception.MemberException;
 import _thBackEnd.LectureCode.security.JwtUtility;
 import _thBackEnd.LectureCode.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,22 +19,26 @@ public class MemberController {
     private final MemberService memberService;
     private final JwtUtility jwtUtility;
 
+    @Operation(summary = "회원가입", description = "아이디, 비밀전호, 닉네임 필요", tags = {"Member"},
+    responses = {@ApiResponse(responseCode = "201", description = "Member 생성 후 token 반환 "),
+    @ApiResponse(responseCode = "409", description = "아이디 중복으로 인한 오류")})
     @PostMapping("/member/add")
     public ResponseEntity<String> addMember(@RequestBody MemberDTO.MemberCreateReq request) {
         Member member = memberService.singUp(request.getUserId(), request.getPassword(), request.getNickname());
 //        if (member == null) { // member가 null이 될 경우의 수가 없으므로 삭제
 //            return null;
 //        }
-        return ResponseEntity.ok(jwtUtility.generateToken(member.getUserId()));
+        String token = memberService.login(member.getUserId(), member.getPassword());
+        return ResponseEntity.status(HttpStatus.CREATED).body(token);
     }
 
     @PostMapping("/member/login")
     public ResponseEntity<String> login(@RequestBody MemberDTO.LoginReq request){
-        Member member = memberService.login(request.getUserId(), request.getPassword());
+        String token = memberService.login(request.getUserId(), request.getPassword());
 //        if (member == null) { // member가 null이 될 경우의 수가 없으므로 삭제
 //            return null;
 //        }
-        return ResponseEntity.ok(jwtUtility.generateToken(member.getUserId()));
+        return ResponseEntity.ok(jwtUtility.generateToken(token));
     }
 
     @GetMapping("/member/{userId}")

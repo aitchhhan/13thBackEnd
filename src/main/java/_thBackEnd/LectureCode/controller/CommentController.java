@@ -19,19 +19,15 @@ public class CommentController {
     private final JwtUtility jwtUtility;
 
     @PostMapping("/comment")
-    public CommentDTO.CommentResponse createComment(@RequestHeader("Authorization") String bearerToken, @RequestBody CommentDTO.CommentCreateRequest request){
-        if (!jwtUtility.validateToken(bearerToken)) {
-            return null;
-        }
+    public CommentDTO.CommentResponse createComment(@RequestHeader("Authorization") String token, @RequestBody CommentDTO.CommentCreateRequest request){
+        jwtUtility.validateToken(token);
         Comment comment = commentService.saveComment(request.getToken(), request.getArticleId(), request.getContent());
         return new CommentDTO.CommentResponse(comment);
     }
 
     @PutMapping("/comment")
-    public CommentDTO.CommentResponse updateComment(@RequestHeader("Authorization") String bearerToken, @RequestBody CommentDTO.CommentUpdateRequest request){
-        if (!jwtUtility.validateToken(bearerToken)) {
-            return null;
-        }
+    public CommentDTO.CommentResponse updateComment(@RequestHeader("Authorization") String token, @RequestBody CommentDTO.CommentUpdateRequest request){
+        jwtUtility.validateToken(token);
         Comment comment = commentService.updateComment(request.getCommentId(), request.getToken(), request.getContent());
         if(comment == null) return null;
         return new CommentDTO.CommentResponse(comment);
@@ -47,10 +43,8 @@ public class CommentController {
     }
 
     @DeleteMapping("/comment")
-    public void deleteComment(@RequestHeader("Authorization") String bearerToken, @RequestBody CommentDTO.CommentDeleteRequest request){
-        if (!jwtUtility.validateToken(bearerToken)) {
-            return ;
-        }
-        commentService.deleteComment(request.getCommentId(), bearerToken);
+    public void deleteComment(@RequestHeader("Authorization") String token, @RequestBody CommentDTO.CommentDeleteRequest request){
+        jwtUtility.validateToken(token);
+        commentService.deleteComment(request.getCommentId(), token);
     }
 }

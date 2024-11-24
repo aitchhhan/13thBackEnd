@@ -17,30 +17,24 @@ public class ArticleController {
     private final JwtUtility jwtUtility;
 
     @PostMapping("/article/add")
-    public ArticleDTO.ResponseArticle createArticle(@RequestHeader("Authorization") String bearerToken, @RequestBody ArticleDTO.addArticleReq request){
-        if (!jwtUtility.validateToken(bearerToken)) {
-            return null;
-        }
-        String userId = jwtUtility.getClaimsFromToken(bearerToken).getSubject();
+    public ArticleDTO.ResponseArticle createArticle(@RequestHeader("Authorization") String token, @RequestBody ArticleDTO.addArticleReq request){
+        jwtUtility.validateToken(token);
+        String userId = jwtUtility.getClaimsFromToken(token).getSubject();
         Article article = articleService.addArticle(userId, request.getTitle(), request.getContent());
         return new ArticleDTO.ResponseArticle(article);
     }
 
     @PutMapping("/article/update")
-    public ArticleDTO.ResponseArticle updateArticle(@RequestHeader("Authorization") String bearerToken, @RequestBody ArticleDTO.ArticleReq request){
-        if (!jwtUtility.validateToken(bearerToken)) {
-            return null;
-        }
-        Article article = articleService.updateArticle(request.getArticleId(), request.getTitle(), request.getContent(), bearerToken);
+    public ArticleDTO.ResponseArticle updateArticle(@RequestHeader("Authorization") String token, @RequestBody ArticleDTO.ArticleReq request){
+        jwtUtility.validateToken(token);
+        Article article = articleService.updateArticle(request.getArticleId(), request.getTitle(), request.getContent(), token);
         return new ArticleDTO.ResponseArticle(article);
     }
 
     @DeleteMapping("/article/{articleId}")
-    public void deleteArticle(@RequestHeader("Authorization") String bearerToken, @PathVariable("articleId") Long articleId){
-        if (!jwtUtility.validateToken(bearerToken)) {
-            return ;
-        }
-        articleService.deleteArticle(articleId, bearerToken);
+    public void deleteArticle(@RequestHeader("Authorization") String token, @PathVariable("articleId") Long articleId){
+        jwtUtility.validateToken(token);
+        articleService.deleteArticle(articleId, token);
     }
 
     @GetMapping("/article/{articleId}")
