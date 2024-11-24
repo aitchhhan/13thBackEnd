@@ -8,14 +8,14 @@ import java.time.LocalDateTime;
 public class ArticleDTO {
 
     @Data
-    public static class ResponseArticle{
+    public static class ArticleRes {
         private String title;
         private String content;
         private String writer;
         private LocalDateTime createDate;
         private boolean isChange;
 
-        public ResponseArticle(Article article) {
+        public ArticleRes(Article article) {
             this.title = article.getTitle();
             this.content = article.getContent();
             this.writer = article.getWriter().getNickname();

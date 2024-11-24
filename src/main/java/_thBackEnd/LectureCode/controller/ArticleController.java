@@ -17,18 +17,18 @@ public class ArticleController {
     private final JwtUtility jwtUtility;
 
     @PostMapping("/article/add")
-    public ArticleDTO.ResponseArticle createArticle(@RequestHeader("Authorization") String token, @RequestBody ArticleDTO.addArticleReq request){
+    public ArticleDTO.ArticleRes createArticle(@RequestHeader("Authorization") String token, @RequestBody ArticleDTO.addArticleReq request){
         jwtUtility.validateToken(token);
         String userId = jwtUtility.getClaimsFromToken(token).getSubject();
         Article article = articleService.addArticle(userId, request.getTitle(), request.getContent());
-        return new ArticleDTO.ResponseArticle(article);
+        return new ArticleDTO.ArticleRes(article);
     }
 
     @PutMapping("/article/update")
-    public ArticleDTO.ResponseArticle updateArticle(@RequestHeader("Authorization") String token, @RequestBody ArticleDTO.ArticleReq request){
+    public ArticleDTO.ArticleRes updateArticle(@RequestHeader("Authorization") String token, @RequestBody ArticleDTO.ArticleReq request){
         jwtUtility.validateToken(token);
         Article article = articleService.updateArticle(request.getArticleId(), request.getTitle(), request.getContent(), token);
-        return new ArticleDTO.ResponseArticle(article);
+        return new ArticleDTO.ArticleRes(article);
     }
 
     @DeleteMapping("/article/{articleId}")
@@ -38,25 +38,25 @@ public class ArticleController {
     }
 
     @GetMapping("/article/{articleId}")
-    public ArticleDTO.ResponseArticle getArticle(@PathVariable("articleId") Long articleId){
+    public ArticleDTO.ArticleRes getArticle(@PathVariable("articleId") Long articleId){
         Article article = articleService.findArticle(articleId);
-        return new ArticleDTO.ResponseArticle(article);
+        return new ArticleDTO.ArticleRes(article);
     }
 
     @GetMapping("/articles/all")
-    public List<ArticleDTO.ResponseArticle> allArticleList(){
-        List<ArticleDTO.ResponseArticle> responseArticles = new ArrayList<>();
+    public List<ArticleDTO.ArticleRes> allArticleList(){
+        List<ArticleDTO.ArticleRes> responseArticles = new ArrayList<>();
         for (Article article : articleService.findAllArticle()) {
-            responseArticles.add(new ArticleDTO.ResponseArticle(article));
+            responseArticles.add(new ArticleDTO.ArticleRes(article));
         }
         return responseArticles;
     }
 
     @GetMapping("/articles/all/{memberId}")
-    public List<ArticleDTO.ResponseArticle> writerArticleList(@PathVariable("memberId") String memberId){
-        List<ArticleDTO.ResponseArticle> responseArticles = new ArrayList<>();
+    public List<ArticleDTO.ArticleRes> writerArticleList(@PathVariable("memberId") String memberId){
+        List<ArticleDTO.ArticleRes> responseArticles = new ArrayList<>();
         for (Article article : articleService.findUserArticles(memberId)) {
-            responseArticles.add(new ArticleDTO.ResponseArticle(article));
+            responseArticles.add(new ArticleDTO.ArticleRes(article));
         }
         return responseArticles;
     }
