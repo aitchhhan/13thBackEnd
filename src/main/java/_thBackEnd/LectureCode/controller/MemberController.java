@@ -2,7 +2,6 @@ package _thBackEnd.LectureCode.controller;
 
 import _thBackEnd.LectureCode.DTO.MemberDTO;
 import _thBackEnd.LectureCode.domain.Member;
-import _thBackEnd.LectureCode.exception.MemberException;
 import _thBackEnd.LectureCode.security.JwtUtility;
 import _thBackEnd.LectureCode.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,7 +23,7 @@ public class MemberController {
     @ApiResponse(responseCode = "409", description = "아이디 중복으로 인한 오류")})
     @PostMapping("/member/add")
     public ResponseEntity<String> addMember(@RequestBody MemberDTO.MemberCreateReq request) {
-        Member member = memberService.singUp(request.getUserId(), request.getPassword(), request.getNickname());
+        Member member = memberService.signUp(request.getUserId(), request.getPassword(), request.getNickname());
 //        if (member == null) { // member가 null이 될 경우의 수가 없으므로 삭제
 //            return null;
 //        }
