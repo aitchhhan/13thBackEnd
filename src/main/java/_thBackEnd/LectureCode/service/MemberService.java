@@ -20,7 +20,7 @@ public class MemberService {
     }
 
     @Transactional
-    public Member singUp(String userId, String password, String nickname) {
+    public Member signUp(String userId, String password, String nickname) {
         if (memberRepository.findByUserId(userId) != null) {
             return null;
         }
