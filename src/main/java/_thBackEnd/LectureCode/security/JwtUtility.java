@@ -37,13 +37,13 @@ public class JwtUtility {
                 throw new JwtException("JWT 검증 중 잘못된 인수가 전달되었습니다.");
             }
 
-            String pureToken = bearerToken.substring(7); // Bearer 제거
+            String token = bearerToken.substring(7); // Bearer 제거
 
             // 토큰 서명 및 유효성 검증
             Jwts.parserBuilder()
                     .setSigningKey(key) // 서명 키 설정
                     .build()
-                    .parseClaimsJws(pureToken); // 서명이 유효하지 않거나 변조되었으면 예외 발생
+                    .parseClaimsJws(token); // 서명이 유효하지 않거나 변조되었으면 예외 발생
         } catch (JwtException e) {
             throw new JwtException("JWT 검증 실패: " + e.getMessage());
         }
