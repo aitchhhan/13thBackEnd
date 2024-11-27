@@ -1,6 +1,7 @@
 package _thBackEnd.LectureCode.service;
 
 import _thBackEnd.LectureCode.domain.Member;
+import _thBackEnd.LectureCode.exception.InvalidUserIdException;
 import _thBackEnd.LectureCode.exception.MemberException;
 import _thBackEnd.LectureCode.repository.MemberRepository;
 import _thBackEnd.LectureCode.security.JwtUtility;
@@ -51,7 +52,7 @@ public class MemberService {
     public Member changeName(String token, String newNickname) {
         Member member = tokenToMember(token); // 본인만 닉네임 바꿀 수 있게 토큰에서 member 추출
         if (member == null) { // 어쩌면 이 부분은 tokenToMember에서 오류 처리를 하는게 좋을지도?
-            throw new MemberException(400, "없는 userId");
+            throw new InvalidUserIdException();
         }
         member.setNickname(newNickname);
         return member;
@@ -65,7 +66,7 @@ public class MemberService {
     public boolean deleteMember(String userId) {
         Member member = memberRepository.findByUserId(userId);
         if (member == null) {
-            throw new MemberException(400, "없는 userId");
+            throw new InvalidUserIdException();
         }
         memberRepository.deleteMember(member);
         return true;
