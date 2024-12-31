@@ -5,6 +5,7 @@ import _thBackEnd.LectureCode.domain.Comment;
 import _thBackEnd.LectureCode.domain.Member;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CommentRepository {
     Comment addComment(Comment comment);
