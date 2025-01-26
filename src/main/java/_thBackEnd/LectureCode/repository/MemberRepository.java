@@ -17,3 +17,4 @@ public interface MemberRepository {
 
     public List<Member> findByName(String name);
 }
+

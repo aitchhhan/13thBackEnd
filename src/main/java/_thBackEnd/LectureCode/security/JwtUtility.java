@@ -10,22 +10,24 @@ import java.util.Date;
 @Service
 public class JwtUtility {
 
-    private final Key key; // Key 타입으로 변경
+    private final Key key; // JWT 서명에 사용되는 비밀 키
 
-    private static final long expirationTime = 1000 * 60 * 60; // 1시간
+    private static final long expirationTime = 1000 * 60 * 60; // 토큰 만료 시간: 1시간
 
+    // 비밀 키 생성
     public JwtUtility() {
         this.key = Keys.secretKeyFor(SignatureAlgorithm.HS512); // 키 생성
     }
 
     // JWT 생성
     public String generateToken(String userId) {
+        System.out.println(userId);
         return Jwts.builder()
-                .setSubject(userId) // jwt 주체를 userId로 설정
+                .setSubject(userId) // 토큰에 사용자 ID 저장
                 .setIssuedAt(new Date()) // 토큰 생성 시간(시점) 설정
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // 토큰 만료 시간 설정
-                .signWith(key) // Key 객체를 직접 사용
-                .compact(); // 토큰 생성 및 압축
+                .signWith(key) // 비밀 키로 서명
+                .compact(); // 토큰 생성 후 반환
     }
 
     // JWT 유효성 검사
@@ -33,31 +35,39 @@ public class JwtUtility {
         try {
             // 1. Bearer 검증
             if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
-                System.out.println("Bearer로 시작하지 않음"); // exception을 아직 안 배워서 어떤 오류인지 Console에서 볼 수 있게
-                return false; // 토큰이 null 이거나, Bearer로 시작하지 않을 경우 false
+                System.out.println("Bearer로 시작하지 않음");
+                return false; // 올바르지 않은 형식일 경우
             }
+            System.out.println("받은 Bearer 토큰: " + bearerToken);
+            System.out.println("파싱된 토큰: " + bearerToken.substring(7));
 
-            String token = bearerToken.substring(7); // Bearer 제거
+            String token = bearerToken.substring(7); // "Bearer " 제거 후 실제 토큰만 추출
 
             // 토큰 서명 및 유효성 검증
             Jwts.parserBuilder()
-                    .setSigningKey(key) // 서명 키 설정
+                    .setSigningKey(key) // 서명 확인을 위한 키 설정
                     .build()
-                    .parseClaimsJws(token); // 서명이 유효하지 않거나 변조되었으면 예외 발생
+                    .parseClaimsJws(token);  // 토큰 파싱 및 검증
 
             return true; // 유효한 토큰일 경우 true
-        } catch (JwtException e) {
-            System.out.println("Jwt 오류"); // exception을 아직 안 배워서 어떤 오류인지 Console에서 볼 수 있게
+        } catch (ExpiredJwtException e) {
+            System.out.println("토큰이 만료되었습니다: " + e.getMessage());
+            return false;
+        }
+        catch (JwtException e) {
+            System.out.println("Jwt 오류");
             return false; // 서명 검증 실패, 만료, 형식 오류 등이 발생한 경우 false
         }
     }
 
     // 토큰에서 클레임 추출
     public Claims getClaimsFromToken(String token) {
-        return Jwts.parserBuilder() // 이러한 형태는 JWT에서 클레임을 추출하는 표준적인 방식
-                .setSigningKey(key) // jwt 서명을 검증하기 위해 필요한 비밀 키 설정, jwt를 생성하며 서명할 때 사용했던 키와 동일해야 함
-                .build() // 설정된 파서를 실제로 사용할 수 있는 파서 객체로 만듬
-                .parseClaimsJws(token) // jwt 토큰 파싱하고, 서명의 유효성 검증
-                .getBody(); // 파싱된 jwt의 Payload에서 Claim 추출
+        String newToken = token.substring(7); //"Bearer " 제거 후 실제 토큰만 추출
+        // JWT 토큰에서 정보를 추출 (예: userId, 생성 시간 등)
+        return Jwts.parserBuilder()
+                .setSigningKey(key) // 서명 확인을 위한 키 설정
+                .build()
+                .parseClaimsJws(newToken) // 토큰 파싱 및 검증
+                .getBody();  // 토큰의 페이로드에서 클레임 데이터 반환
     }
 }

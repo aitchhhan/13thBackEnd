@@ -1,6 +1,7 @@
 package _thBackEnd.LectureCode.repository;
 
 import _thBackEnd.LectureCode.domain.Member;
+import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -9,19 +10,15 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class MemoryMemberRepository implements MemberRepository{
+public class MemoryMemberRepository implements MemberRepository {
 
     private static final Map<Long, Member> local = new HashMap<>();
-
+    private static Long sequence = 0L;
     @Override
     public Member save(Member member) {
+        member.setId(++sequence);
         local.put(member.getId(), member);
         return member;
-    }
-
-    @Override
-    public Member findById(Long id) {
-        return local.get(id);
     }
 
     @Override
@@ -33,6 +30,13 @@ public class MemoryMemberRepository implements MemberRepository{
         }
         return null;
     }
+
+
+    @Override
+    public Member findById(Long id) {
+        return null;
+    }
+
 
     @Override
     public List<Member> findAll() {

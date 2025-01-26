@@ -13,6 +13,13 @@ public class MemberDTO {
     }
 
     @Data
+    public static class LoginReq {
+        private String userId;
+        private String password;
+    }
+
+
+    @Data
     public static class MemberUpdateReq {
         private String nickname;
     }
@@ -25,13 +32,8 @@ public class MemberDTO {
     }
 
     @Data
-    public static class LoginReq {
-        private String userId;
-        private String password;
-    }
-
-    @Data
     public static class DeleteReq {
         private String userId;
     }
 }
+

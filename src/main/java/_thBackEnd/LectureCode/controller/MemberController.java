@@ -5,6 +5,7 @@ import _thBackEnd.LectureCode.domain.Member;
 import _thBackEnd.LectureCode.security.JwtUtility;
 import _thBackEnd.LectureCode.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -12,21 +13,19 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
-    private final JwtUtility jwtUtility;
 
     @PostMapping("/member/add")
     public String addMember(@RequestBody MemberDTO.MemberCreateReq request) {
-        Member member = memberService.singUp(request.getUserId(), request.getPassword(), request.getNickname());
+        Member member = memberService.signUp(request.getUserId(), request.getPassword(), request.getNickname());
         if (member == null) {
             return null;
         }
-        return memberService.login(member.getUserId(), member.getPassword());
+        return memberService.login(request.getUserId(), request.getPassword());
     }
 
     @PostMapping("/member/login")
     public String login(@RequestBody MemberDTO.LoginReq request){
-        String token = memberService.login(request.getUserId(), request.getPassword());
-        return jwtUtility.generateToken(token);
+        return memberService.login(request.getUserId(), request.getPassword());
     }
 
     @GetMapping("/member/{userId}")
@@ -35,8 +34,11 @@ public class MemberController {
         return new MemberDTO.MemberRes(member.getUserId(),member.getNickname());
     }
 
+    private final JwtUtility jwtUtility;
+
     @PutMapping("/member")
-    public MemberDTO.MemberRes changeMemberName(@RequestHeader("Authorization") String token, @RequestBody MemberDTO.MemberUpdateReq request){
+    public MemberDTO.MemberRes changeMemberName(@RequestHeader("Authorization") String token,
+                                                @RequestBody MemberDTO.MemberUpdateReq request){
         if (!jwtUtility.validateToken(token)) {
             return null;
         }
@@ -51,4 +53,5 @@ public class MemberController {
         }
         return memberService.deleteMember(request.getUserId());
     }
+
 }
