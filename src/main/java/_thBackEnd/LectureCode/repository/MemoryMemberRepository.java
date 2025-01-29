@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Repository
+//@Repository
 public class MemoryMemberRepository implements MemberRepository {
 
     private static final Map<Long, Member> local = new HashMap<>();

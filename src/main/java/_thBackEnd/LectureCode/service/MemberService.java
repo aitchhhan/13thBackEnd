@@ -6,15 +6,18 @@ import _thBackEnd.LectureCode.security.JwtUtility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    @Transactional
     public Member signUp(String userId, String password, String nickname) {
         if (memberRepository.findByUserId(userId) != null) {
             return null;
@@ -41,6 +44,7 @@ public class MemberService {
         return memberRepository.findByUserId(jwtUtility.getClaimsFromToken(token).getSubject());
     }
 
+    @Transactional
     public Member changeName(String token, String newNickname) {
         Member member = tokenToMember(token); // 본인만 닉네임 바꿀 수 있게 토큰에서 member 추출
         if (member == null) {
@@ -56,6 +60,7 @@ public class MemberService {
         return memberRepository.findByUserId(userId);
     }
 
+    @Transactional
     public boolean deleteMember(String userId) {
         Member member = memberRepository.findByUserId(userId);
         if (member == null) {
