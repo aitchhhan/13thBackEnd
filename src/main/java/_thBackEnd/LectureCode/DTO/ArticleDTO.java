@@ -39,4 +39,17 @@ public class ArticleDTO {
         private String title;
         private String content;
     }
+
+    @Data
+    public static class ArticleListDTO{
+        Long id;
+        String title;
+        String writerId;
+
+        public ArticleListDTO(Long id, String title, String writerId) {
+            this.id = id;
+            this.title = title;
+            this.writerId = writerId;
+        }
+    }
 }

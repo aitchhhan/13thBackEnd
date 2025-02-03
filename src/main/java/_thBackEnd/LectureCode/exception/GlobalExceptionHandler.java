@@ -23,4 +23,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> InvalidUserId(InvalidUserIdException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("없는 userId");
     }
+
+    @ExceptionHandler(InvalidArticleIdException.class)
+    public ResponseEntity<String> InvalidArticleId(InvalidArticleIdException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("없는 articleId");
+    }
 }

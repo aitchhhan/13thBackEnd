@@ -3,6 +3,7 @@ package _thBackEnd.LectureCode.service;
 import _thBackEnd.LectureCode.domain.Article;
 import _thBackEnd.LectureCode.domain.Comment;
 import _thBackEnd.LectureCode.domain.Member;
+import _thBackEnd.LectureCode.exception.InvalidArticleIdException;
 import _thBackEnd.LectureCode.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,9 +21,12 @@ public class CommentService {
     private final ArticleService articleService;
 
     @Transactional
-    public Comment saveComment(String token, Long article_id, String content){
+    public Comment saveComment(String token, Long articleId, String content){
         Member member = memberService.tokenToMember(token);
-        Article article = articleService.findArticle(article_id);
+        Article article = articleService.findArticle(articleId);
+        if (article == null) {
+            throw new InvalidArticleIdException();
+        }
         Comment comment = new Comment(member, article, content);
         commentRepository.addComment(comment);
         return comment;

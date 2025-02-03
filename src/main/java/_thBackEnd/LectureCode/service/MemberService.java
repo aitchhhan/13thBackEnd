@@ -18,7 +18,11 @@ public class MemberService {
     private final JwtUtility jwtUtility;
 
     public Member tokenToMember(String token){
-        return memberRepository.findByUserId(jwtUtility.getClaimsFromToken(token).getSubject());
+        Member member = memberRepository.findByUserId(jwtUtility.getClaimsFromToken(token).getSubject());
+        if (member == null) {
+            throw new InvalidUserIdException();
+        }
+        return member;
     }
 
     @Transactional

@@ -10,11 +10,8 @@ public class MemberDTO {
 
     @Data
     public static class MemberCreateReq {
-        @Schema(description = "아이디", example = "testUserId")
         private String userId;
-        @Schema(description = "비밀번호", example = "testPassword")
         private String password;
-        @Schema(description = "닉네임", example = "testNickname")
         private String nickname;
     }
 

@@ -1,5 +1,6 @@
 package _thBackEnd.LectureCode.repository;
 
+import _thBackEnd.LectureCode.DTO.ArticleDTO;
 import _thBackEnd.LectureCode.domain.Article;
 import _thBackEnd.LectureCode.domain.Comment;
 import _thBackEnd.LectureCode.domain.Member;
@@ -14,6 +15,7 @@ import java.util.List;
 public class CommentRepositoryImpl implements CommentRepository {
 
     private final EntityManager em;
+
 
     @Override
     public Comment addComment(Comment comment) {
@@ -35,5 +37,11 @@ public class CommentRepositoryImpl implements CommentRepository {
     public List<Comment> findArticleComment(Article article) {
         return em.createQuery("select c from Comment c where c.article = :article", Comment.class)
                 .setParameter("article",article).getResultList();
+    }
+
+    @Override
+    public List<Comment> findMemberComment(Member member){
+        return em.createQuery("select c from Comment c where c.writer = :member", Comment.class)
+                .setParameter("member",member).getResultList();
     }
 }

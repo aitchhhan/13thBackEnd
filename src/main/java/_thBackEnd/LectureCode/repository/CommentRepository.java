@@ -1,5 +1,6 @@
 package _thBackEnd.LectureCode.repository;
 
+import _thBackEnd.LectureCode.DTO.ArticleDTO;
 import _thBackEnd.LectureCode.domain.Article;
 import _thBackEnd.LectureCode.domain.Comment;
 import _thBackEnd.LectureCode.domain.Member;
@@ -12,4 +13,5 @@ public interface CommentRepository {
     Comment findById(Long id);
     void deleteComment(Comment comment);
     List<Comment> findArticleComment(Article article);
+    List<Comment> findMemberComment(Member member);
 }
