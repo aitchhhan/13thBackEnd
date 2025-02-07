@@ -1,6 +1,7 @@
 package _thBackEnd.LectureCode.service;
 
 import _thBackEnd.LectureCode.domain.Member;
+import _thBackEnd.LectureCode.domain.RoleType;
 import _thBackEnd.LectureCode.exception.InvalidUserIdException;
 import _thBackEnd.LectureCode.exception.MemberException;
 import _thBackEnd.LectureCode.repository.MemberRepository;
@@ -18,19 +19,15 @@ public class MemberService {
     private final JwtUtility jwtUtility;
 
     public Member tokenToMember(String token){
-        Member member = memberRepository.findByUserId(jwtUtility.getClaimsFromToken(token).getSubject());
-        if (member == null) {
-            throw new InvalidUserIdException();
-        }
-        return member;
+        return memberRepository.findByUserId(jwtUtility.getClaimsFromToken(token).getSubject());
     }
 
     @Transactional
-    public Member signUp(String userId, String password, String nickname) {
+    public Member signUp(String userId, String password, String nickname, RoleType roleType) {
         if (memberRepository.findByUserId(userId) != null) {
-            throw new MemberException(409, "이미 있는 userId");
+            return null;
         }
-        Member member = new Member(userId, password);
+        Member member = new Member(userId, password, roleType);
         member.setNickname(nickname);
         memberRepository.save(member);
         return member;
@@ -46,10 +43,9 @@ public class MemberService {
     public String login(String userId, String password) {
         Member member = memberRepository.findByUserId(userId);
         if (member == null || !member.checkPassword(password)) {
-            // 딮하게 예외 처리를 한다면 || 연산으로 묶지 않고 따로 따로 예외 처리를 해주면 됨
-            throw new MemberException(400, "존재하지 않거나, 틀린 비밀번호");
+            return null;
         }
-        return jwtUtility.generateToken(member.getUserId());
+        return jwtUtility.generateToken(member.getUserId(), member.getRoleType());
     }
 
     @Transactional

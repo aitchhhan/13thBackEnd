@@ -11,7 +11,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MemberException.class)
     public ResponseEntity<String> MemberExceptionHandler(MemberException e) {
-        return ResponseEntity.status(e.getStatusCode()).body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 있는 userId");
     }
 
     @ExceptionHandler(JwtException.class)

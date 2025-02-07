@@ -26,7 +26,7 @@ public class CommentController {
 
     @Operation(summary = "댓글 생성", description = "Header에 token 필요, body에 json 형태로 게시물Id, 댓글 내용 필요",
             responses = {@ApiResponse(responseCode = "201", description = "댓글 생성"),
-                    @ApiResponse(responseCode = "404", description = "없는 userId or 없는 articleId")})
+                    @ApiResponse(responseCode = "404", description = "없는 articleId")})
     @PostMapping("/comment")
     public ResponseEntity<CommentDTO.ResComment> createComment(@RequestHeader("Authorization") String token, @RequestBody CommentDTO.CommentCreateReq request){
         jwtUtility.validateToken(token);
@@ -43,18 +43,29 @@ public class CommentController {
     }
 
     @GetMapping("/comment/article/{id}")
-    public List<CommentDTO.ResComment> articleComment(@PathVariable("id") Long articleId) {
-        return commentService.articleToComment(articleId) // 특정 게시글의 모든 댓글을 List<Comment>로 반환
+    public ResponseEntity<List<CommentDTO.ResComment>> articleComment(@PathVariable("id") Long articleId) {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                commentService.articleToComment(articleId) // 특정 게시글의 모든 댓글을 List<Comment>로 반환
                 .stream() // Stream API를 사용하여 List<Comment>을 데이터를 흐름으로 처리할 수 있게 함
                 .map(CommentDTO.ResComment::new) // Comment 객체를 CommentDTO.ResComment 객체로 변환
-                .collect(Collectors.toList()); // 변환된 ResComment 객체들을 List로 수집(collect)하여 반환
-    }                                          // 반환타입이 List<CommentDTO.ResComment>니까 이 타입으로 반환되겠죠?
-
+                .collect(Collectors.toList())); // 변환된 ResComment 객체들을 List로 수집(collect)하여 반환
+    }
+//    @GetMapping("/comment/article/{id}")
+//    public ResponseEntity<List<CommentDTO.ResComment>> articleComment(@PathVariable("id") Long articleId) {
+//        List<CommentDTO.ResComment> response = new ArrayList<>();
+//        for (Comment comment : commentService.articleToComment(articleId)) {
+//            response.add(new CommentDTO.ResComment(comment));
+//
+//        }
+//        return ResponseEntity.status(HttpStatus.OK).body(response);
+//
+//    }
 
 
     @DeleteMapping("/comment")
-    public void deleteComment(@RequestHeader("Authorization") String token, @RequestBody CommentDTO.CommentDeleteReq request){
+    public ResponseEntity<Void> deleteComment(@RequestHeader("Authorization") String token, @RequestBody CommentDTO.CommentDeleteReq request) {
         jwtUtility.validateToken(token);
         commentService.deleteComment(request.getCommentId(), token);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

@@ -10,13 +10,13 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class ArticleRepositoryImpl implements ArticleRepository {
+public class JpaArticleRepository implements ArticleRepository {
 
     private final EntityManager em;
     private final MemberRepository memberRepository;
 
     @Override
-    public Article addArticle(Article article) {
+    public Article saveArticle(Article article) {
         em.persist(article);
         return article;
     }

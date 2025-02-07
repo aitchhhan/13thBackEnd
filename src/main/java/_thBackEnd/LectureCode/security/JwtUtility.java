@@ -1,5 +1,6 @@
 package _thBackEnd.LectureCode.security;
 
+import _thBackEnd.LectureCode.domain.RoleType;
 import _thBackEnd.LectureCode.exception.InvalidJwtException;
 import io.jsonwebtoken.*;
 import org.springframework.stereotype.Service;
@@ -26,9 +27,10 @@ public class JwtUtility {
     }                                                    // base64Secret이 64바이트 이상이면 자동으로 HS512 알고리즘 사용
 
     // JWT 생성
-    public String generateToken(String userId) {
+    public String generateToken(String userId, RoleType roleType) {
         return Jwts.builder()
                 .setSubject(userId) // 토큰의 주체로 userId 설정
+                .claim("RoleType", roleType) // 클레임에 roleType 추가
                 .setIssuedAt(new Date()) // 토큰 생성 시점 설정
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // 토큰 만료 시간 설정
                 .signWith(secretKey, SignatureAlgorithm.HS512) // 비밀 키로 서명 // 알아서 HS512 알고리즘을 사용하지만 명확하게 지정하는 것이 좋음
@@ -38,9 +40,9 @@ public class JwtUtility {
     // JWT 유효성 검사
     public Boolean validateToken(String bearerToken) {
         try {
-            // 1. Bearer 검증
+            // 토큰이 null 값이거나 "Bearer "로 시작하지 않는 경우
             if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
-                return false; // 올바르지 않은 형식일 경우
+                return false;
             }
 
             String token = bearerToken.substring(7); // "Bearer " 제거 후 실제 토큰만 추출

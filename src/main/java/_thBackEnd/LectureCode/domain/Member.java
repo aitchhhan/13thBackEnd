@@ -1,9 +1,6 @@
 package _thBackEnd.LectureCode.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,11 +19,15 @@ public class Member {
     @Setter
     private String nickname;
 
+    @Enumerated(EnumType.STRING) // 기본적으로 enum 값은 숫자로 저장되지만, 이를 문자열로 저장하도록
+    private RoleType roleType;
+
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public Member(String userId, String password) {
+    public Member(String userId, String password, RoleType roleType) {
         this.userId = userId;
         this.setPassword(password);
+        this.roleType = roleType;
     }
 
     public void setPassword(String password) {

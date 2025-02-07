@@ -20,6 +20,7 @@ public class ArticleDTO {
             this.content = article.getContent();
             this.writer = article.getWriter().getNickname();
             this.createDate = article.getCreateDate();
+
             if(article.getCreateDate().equals(article.getUpdateDate())){
                 this.isChange = false;
             }else{
@@ -35,21 +36,9 @@ public class ArticleDTO {
         private String content;
     }
     @Data
-    public static class addArticleReq{
+    public static class AddArticleReq{
         private String title;
         private String content;
     }
 
-    @Data
-    public static class ArticleListDTO{
-        Long id;
-        String title;
-        String writerId;
-
-        public ArticleListDTO(Long id, String title, String writerId) {
-            this.id = id;
-            this.title = title;
-            this.writerId = writerId;
-        }
-    }
 }

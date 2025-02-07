@@ -17,7 +17,7 @@ public class ArticleController {
     private final JwtUtility jwtUtility;
 
     @PostMapping("/article/add")
-    public ArticleDTO.ArticleRes createArticle(@RequestHeader("Authorization") String token, @RequestBody ArticleDTO.addArticleReq request){
+    public ArticleDTO.ArticleRes createArticle(@RequestHeader("Authorization") String token, @RequestBody ArticleDTO.AddArticleReq request){
         jwtUtility.validateToken(token);
         String userId = jwtUtility.getClaimsFromToken(token).getSubject();
         Article article = articleService.addArticle(userId, request.getTitle(), request.getContent());

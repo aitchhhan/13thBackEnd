@@ -1,5 +1,6 @@
 package _thBackEnd.LectureCode.DTO;
 
+import _thBackEnd.LectureCode.domain.RoleType;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,6 +14,7 @@ public class MemberDTO {
         private String userId;
         private String password;
         private String nickname;
+        private RoleType roleType;
     }
 
     @Data

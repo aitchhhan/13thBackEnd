@@ -21,8 +21,7 @@ public class ArticleService {
     public Article addArticle(String writerId, String title, String content) {
         Member member = memberService.findByUserId(writerId);
         Article article = new Article(title, content, member);
-        articleRepository.addArticle(article);
-        return article;
+        return articleRepository.saveArticle(article);
     }
 
     @Transactional

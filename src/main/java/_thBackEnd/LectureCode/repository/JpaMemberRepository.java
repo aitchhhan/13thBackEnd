@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class MemberRepositoryImpl implements MemberRepository {
+public class JpaMemberRepository implements MemberRepository {
 
     private final EntityManager em;
 
