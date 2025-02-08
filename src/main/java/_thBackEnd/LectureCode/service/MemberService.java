@@ -3,7 +3,6 @@ package _thBackEnd.LectureCode.service;
 import _thBackEnd.LectureCode.domain.Member;
 import _thBackEnd.LectureCode.domain.RoleType;
 import _thBackEnd.LectureCode.exception.InvalidUserIdException;
-import _thBackEnd.LectureCode.exception.MemberException;
 import _thBackEnd.LectureCode.repository.MemberRepository;
 import _thBackEnd.LectureCode.security.JwtUtility;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,7 @@ public class MemberService {
     private final JwtUtility jwtUtility;
 
     public Member tokenToMember(String token){
-        return memberRepository.findByUserId(jwtUtility.getClaimsFromToken(token).getSubject());
+        return memberRepository.findByUserId(jwtUtility.getClaimsFromJwt(token).getSubject());
     }
 
     @Transactional
@@ -45,7 +44,7 @@ public class MemberService {
         if (member == null || !member.checkPassword(password)) {
             return null;
         }
-        return jwtUtility.generateToken(member.getUserId(), member.getRoleType());
+        return jwtUtility.generateJwt(member.getUserId(), member.getRoleType());
     }
 
     @Transactional

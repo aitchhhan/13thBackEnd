@@ -4,11 +4,7 @@ import _thBackEnd.LectureCode.DTO.MemberDTO;
 import _thBackEnd.LectureCode.domain.Member;
 import _thBackEnd.LectureCode.security.JwtUtility;
 import _thBackEnd.LectureCode.service.MemberService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -42,7 +38,7 @@ public class MemberController {
     @PutMapping("/member")
     public MemberDTO.MemberRes changeMemberName(@RequestHeader("Authorization") String token,
                                                 @RequestBody MemberDTO.MemberUpdateReq request){
-        if (!jwtUtility.validateToken(token)) {
+        if (!jwtUtility.validateJwt(token)) {
             return null;
         }
         Member findMember = memberService.changeName(token, request.getNickname());
@@ -51,7 +47,7 @@ public class MemberController {
 
     @DeleteMapping("/member")
     public Boolean deleteMember(@RequestHeader("Authorization") String token, @RequestBody MemberDTO.DeleteReq request){
-        if (!jwtUtility.validateToken(token)) {
+        if (!jwtUtility.validateJwt(token)) {
             return false;
         }
         return memberService.deleteMember(request.getUserId());

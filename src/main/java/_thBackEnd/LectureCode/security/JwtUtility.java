@@ -1,7 +1,7 @@
 package _thBackEnd.LectureCode.security;
 
 import _thBackEnd.LectureCode.domain.RoleType;
-import _thBackEnd.LectureCode.exception.InvalidJwtException;
+import _thBackEnd.LectureCode.exception.HandleJwtException;
 import io.jsonwebtoken.*;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ public class JwtUtility {
 
     private final SecretKey secretKey; // JWT 서명에 사용되는 비밀 키 // 생성한 비밀 키의 타입이 SecretKey 타입
 
-    private static final long expirationTime = 1000 * 60 * 60; // 밀리초 단위 // 토큰 만료 시간: 1시간
+    private static final long expirationTime = 1000 * 60 * 60; // 밀리초 단위 // JWT 만료 시간: 1시간
 
     // JWT 서명에 사용되는 비밀 키 생성
     public JwtUtility(@Value("${jwt.base64Secret}") String base64Secret) { // @Value을 통해 application.yml에서 값 주입
@@ -27,48 +27,45 @@ public class JwtUtility {
     }                                                    // base64Secret이 64바이트 이상이면 자동으로 HS512 알고리즘 사용
 
     // JWT 생성
-    public String generateToken(String userId, RoleType roleType) {
+    public String generateJwt(String userId, RoleType roleType) {
         return Jwts.builder()
-                .setSubject(userId) // 토큰의 주체로 userId 설정
-                .claim("RoleType", roleType) // 클레임에 roleType 추가
-                .setIssuedAt(new Date()) // 토큰 생성 시점 설정
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // 토큰 만료 시간 설정
+                .setSubject(userId) // JWT의 주체로 userId 설정
+                .claim("roles", roleType) // 클레임에 roleType 추가 // Key의 이름을 "roles"로 하기!
+                .setIssuedAt(new Date()) // JWT 생성 시점 설정
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // JWT 만료 시간 설정
                 .signWith(secretKey, SignatureAlgorithm.HS512) // 비밀 키로 서명 // 알아서 HS512 알고리즘을 사용하지만 명확하게 지정하는 것이 좋음
-                .compact(); // 토큰 생성 후 반환
+                .compact(); // JWT 생성 후 문자열로 반환
     }
 
     // JWT 유효성 검사
-    public Boolean validateToken(String bearerToken) {
+    public boolean validateJwt(String jwt) {
         try {
-            // 토큰이 null 값이거나 "Bearer "로 시작하지 않는 경우
-            if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
-                return false;
-            }
-
-            String token = bearerToken.substring(7); // "Bearer " 제거 후 실제 토큰만 추출
-
-            // 토큰 서명 및 유효성 검증
-            Jwts.parserBuilder()
-                    .setSigningKey(secretKey) // 서명 확인을 위한 키 설정
-                    .build()
-                    .parseClaimsJws(token);  // 토큰 파싱 및 검증
+            Jwts.parserBuilder() // JWT를 파싱하고 검증하는 JwtParser 객체를 만들기 위한 설정을 담는 객체 생성
+                    .setSigningKey(secretKey) // JWT를 검증할 때 사용할 서명 키를 설정 // 서명할 때 사용한 비밀 키를 사용
+                    .build() // JwtParserBuilder에 설정된 값들을 기반으로 JwtParser 객체 생성
+                    .parseClaimsJws(jwt);  // JwtParser 객체의 parseClaimsJws()에 JWT를 넣어 검증 // 실질적으로 JWT가 유효한지 검증하는 과정
             return true; // 유효한 토큰일 경우 true
         } catch (ExpiredJwtException e) {
-            return false;
-        }
-        catch (JwtException e) {
-            return false; // 서명 검증 실패, 만료, 형식 오류 등이 발생한 경우 false
+            throw new HandleJwtException("만료된 JWT");
+        } catch (UnsupportedJwtException e) {
+            throw new HandleJwtException("지원되지 않는 JWT 형식");
+        } catch (MalformedJwtException e) {
+            throw new HandleJwtException("손상된 JWT");
+        } catch (SecurityException e) {
+            throw new HandleJwtException("서명이 올바르지 않은 JWT");
+        } catch (IllegalArgumentException e) {
+            throw new HandleJwtException("JWT가 null이거나 빈 문자열임");
+        } catch (JwtException e) {
+            throw new HandleJwtException("기타 JWT관련 예외");
         }
     }
 
-    // 토큰에서 클레임 추출
-    public Claims getClaimsFromToken(String bearerToken) {
-        String token = bearerToken.substring(7); //"Bearer " 제거 후 실제 토큰만 추출
-        // JWT 토큰에서 정보를 추출 (예: userId, 생성 시간 등)
+    // JWT에서 클레임 추출
+    public Claims getClaimsFromJwt(String jwt) {
         return Jwts.parserBuilder()
-                .setSigningKey(secretKey) // 서명 확인을 위한 키 설정
+                .setSigningKey(secretKey)
                 .build()
-                .parseClaimsJws(token) // 토큰 파싱 및 검증
-                .getBody();  // 토큰의 페이로드에서 클레임 데이터 반환
+                .parseClaimsJws(jwt)
+                .getBody();  // JWT의 페이로드에서 클레임 반환
     }
 }

@@ -28,4 +28,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> InvalidArticleId(InvalidArticleIdException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("없는 articleId");
     }
+
+    @ExceptionHandler(HandleJwtException.class)
+    public ResponseEntity<String> handleJwt(HandleJwtException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+    }
 }

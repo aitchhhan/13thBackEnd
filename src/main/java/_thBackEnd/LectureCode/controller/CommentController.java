@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,14 +28,14 @@ public class CommentController {
                     @ApiResponse(responseCode = "404", description = "없는 articleId")})
     @PostMapping("/comment")
     public ResponseEntity<CommentDTO.ResComment> createComment(@RequestHeader("Authorization") String token, @RequestBody CommentDTO.CommentCreateReq request){
-        jwtUtility.validateToken(token);
+        jwtUtility.validateJwt(token);
         Comment comment = commentService.saveComment(token, request.getArticleId(), request.getContent());
         return ResponseEntity.status(HttpStatus.CREATED).body(new CommentDTO.ResComment(comment));
     }
 
     @PutMapping("/comment")
     public ResponseEntity<CommentDTO.ResComment> updateComment(@RequestHeader("Authorization") String token, @RequestBody CommentDTO.CommentUpdateReq request){
-        jwtUtility.validateToken(token);
+        jwtUtility.validateJwt(token);
         Comment comment = commentService.updateComment(request.getCommentId(), token, request.getContent());
         if(comment == null) return null;
         return ResponseEntity.status(HttpStatus.OK).body(new CommentDTO.ResComment(comment));
@@ -64,7 +63,7 @@ public class CommentController {
 
     @DeleteMapping("/comment")
     public ResponseEntity<Void> deleteComment(@RequestHeader("Authorization") String token, @RequestBody CommentDTO.CommentDeleteReq request) {
-        jwtUtility.validateToken(token);
+        jwtUtility.validateJwt(token);
         commentService.deleteComment(request.getCommentId(), token);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
