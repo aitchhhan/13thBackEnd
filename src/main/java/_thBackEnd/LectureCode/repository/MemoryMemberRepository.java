@@ -1,7 +1,6 @@
 package _thBackEnd.LectureCode.repository;
 
 import _thBackEnd.LectureCode.domain.Member;
-import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.HashMap;

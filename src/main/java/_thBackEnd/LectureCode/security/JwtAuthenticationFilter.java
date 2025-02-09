@@ -1,7 +1,7 @@
 package _thBackEnd.LectureCode.security;
 
-import _thBackEnd.LectureCode.domain.RoleType;
 import _thBackEnd.LectureCode.exception.HandleJwtException;
+import _thBackEnd.LectureCode.service.CustomUserDetailsService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -17,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +24,7 @@ import java.util.stream.Collectors;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtility jwtUtility;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -32,11 +32,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String jwt = resolveJwt(request); // HttpServletRequest 헤더에서 JWT 추출
             if (jwt != null && jwtUtility.validateJwt(jwt)) { // 유효한 JWT 토큰 반환시
                 Authentication auth = getAuthentication(jwt); // 인증 객체 생성
-                if (auth != null) { // 유효한 인증 객체 반환시 // null인 경우는 userId가 null인 경우!
 
-                    // Spring Security의 SecurityContext에 인증 정보를 저장하여 이후 요청에서 인증된 사용자로 인식할 수 있도록 함.
-                    SecurityContextHolder.getContext().setAuthentication(auth);
-                }
+                // Spring Security의 SecurityContext에 인증 정보를 저장하여 이후 요청에서 인증된 사용자로 인식할 수 있도록 함.
+                SecurityContextHolder.getContext().setAuthentication(auth); // Controller, Service에서 현재 인증된 사용자 정보를 가져올 수도 있음
             }
             filterChain.doFilter(request, response); // 다음 필터로 요청 전달
         } catch (HandleJwtException e) { // validateJwt 메서드에서 발생한 예외
@@ -59,21 +57,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     // 인증 객체 생성
     private Authentication getAuthentication(String jwt) {
-        Claims claims = jwtUtility.getClaimsFromJwt(jwt); // JWT에서 클레임 추출
-        String userId = claims.getSubject(); // 클레임에서 JWT의 주체 추출
-        if (userId == null) { // 클레임에서 추출한 JWT의 주체가 null이면
-            return null; // null 반환
-        }
-
-        List<String> roles = claims.get("roles", List.class); // 클레임에 추가로 넣은 roles List로 추출
-
-        // Role을 Spring Security GrantedAuthority(권한 객체)로 변환
-        List<GrantedAuthority> authorities = roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                .collect(Collectors.toList());
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(jwtUtility.getClaimsFromJwt(jwt).getSubject());
 
         // UsernamePasswordAuthenticationToken은 Spring Security의 Authentication(인증 객체) 구현체.
-        return new UsernamePasswordAuthenticationToken(userId, jwt, authorities); // JWT 주체, JWT, 권한목록으로 인증 객체 생성
+        return new UsernamePasswordAuthenticationToken(userDetails, jwt, userDetails.getAuthorities()); // userDetails, JWT, 권한으로 인증 객체 생성
     }
 }
 

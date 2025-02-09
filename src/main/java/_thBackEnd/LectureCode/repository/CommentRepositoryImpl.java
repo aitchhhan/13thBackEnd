@@ -1,6 +1,5 @@
 package _thBackEnd.LectureCode.repository;
 
-import _thBackEnd.LectureCode.DTO.ArticleDTO;
 import _thBackEnd.LectureCode.domain.Article;
 import _thBackEnd.LectureCode.domain.Comment;
 import _thBackEnd.LectureCode.domain.Member;

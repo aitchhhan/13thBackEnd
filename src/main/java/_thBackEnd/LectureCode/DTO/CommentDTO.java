@@ -1,10 +1,8 @@
 package _thBackEnd.LectureCode.DTO;
 
 import _thBackEnd.LectureCode.domain.Comment;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 

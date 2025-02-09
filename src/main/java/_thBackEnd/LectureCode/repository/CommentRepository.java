@@ -1,12 +1,10 @@
 package _thBackEnd.LectureCode.repository;
 
-import _thBackEnd.LectureCode.DTO.ArticleDTO;
 import _thBackEnd.LectureCode.domain.Article;
 import _thBackEnd.LectureCode.domain.Comment;
 import _thBackEnd.LectureCode.domain.Member;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CommentRepository {
     Comment addComment(Comment comment);

@@ -3,14 +3,12 @@ package _thBackEnd.LectureCode.security;
 import _thBackEnd.LectureCode.domain.RoleType;
 import _thBackEnd.LectureCode.exception.HandleJwtException;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import org.springframework.beans.factory.annotation.Value;
 import java.util.Base64;
-import io.jsonwebtoken.security.Keys;
-
-
 import java.util.Date;
 
 @Service
@@ -30,7 +28,7 @@ public class JwtUtility {
     public String generateJwt(String userId, RoleType roleType) {
         return Jwts.builder()
                 .setSubject(userId) // JWT의 주체로 userId 설정
-                .claim("roles", roleType) // 클레임에 roleType 추가 // Key의 이름을 "roles"로 하기!
+                .claim("role", roleType) // 클레임에 roleType 추가 // Key의 이름을 "role"로 하기!
                 .setIssuedAt(new Date()) // JWT 생성 시점 설정
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // JWT 만료 시간 설정
                 .signWith(secretKey, SignatureAlgorithm.HS512) // 비밀 키로 서명 // 알아서 HS512 알고리즘을 사용하지만 명확하게 지정하는 것이 좋음
