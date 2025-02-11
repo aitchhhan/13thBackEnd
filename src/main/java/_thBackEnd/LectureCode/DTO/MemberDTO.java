@@ -11,7 +11,6 @@ public class MemberDTO {
         private String userId;
         private String password;
         private String nickname;
-        private RoleType roleType;
     }
 
     @Data

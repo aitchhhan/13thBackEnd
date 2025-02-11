@@ -15,7 +15,7 @@ public class MemberController {
 
     @PostMapping("/member/add")
     public String addMember(@RequestBody MemberDTO.MemberCreateReq request) {
-        Member member = memberService.signUp(request.getUserId(), request.getPassword(), request.getNickname(), request.getRoleType());
+        Member member = memberService.signUp(request.getUserId(), request.getPassword(), request.getNickname());
         if (member == null) {
             return null;
         }

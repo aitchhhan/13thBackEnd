@@ -29,9 +29,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // Swagger UI와 API 문서화 경로에 대한 접근을 모든 사용자에게 허용
-                                .requestMatchers("/member/add", "/login").permitAll() // 회원가입, 로그인은 인증 없이 접근 가능
-                                .requestMatchers("/article").hasRole("Member") // 해당 url에 대한 접근은 "Member"라는 role을 가지고 있어야 함
-                                .requestMatchers("/comment").hasAnyRole("Admin", "Member") // 해당 url에 대한 접근은 "Admin", "Member"라는 role들을 가지고 있어야 함
+                                .requestMatchers("/member/add", "/member/login").permitAll() // 회원가입, 로그인은 인증 없이 접근 가능
+                                .requestMatchers("/article/**").hasRole("MEMBER") // 해당 url에 대한 접근은 "MEMBER"라는 role을 가지고 있어야 함
+                                .requestMatchers("/comment/**").hasAnyRole("ADMIN", "MEMBER") // 해당 url에 대한 접근은 "ADMIN", "MEMBER"라는 role들을 가지고 있어야 함
                                 .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )
                 // Spring Security의 UsernamePasswordAuthenticationFilter 실행 전에 JwtAuthenticationFilter를 실행하도록 설정하여 모든 요청에서 JWT 검증이 이루어지고, 유효한 JWT면 인증 정보를 설정

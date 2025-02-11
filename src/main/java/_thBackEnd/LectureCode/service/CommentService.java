@@ -21,8 +21,8 @@ public class CommentService {
     private final ArticleService articleService;
 
     @Transactional
-    public Comment saveComment(String token, Long articleId, String content){
-        Member member = memberService.tokenToMember(token);
+    public Comment saveComment(String userId, Long articleId, String content){
+        Member member = memberService.tokenToMember(userId);
         Article article = articleService.findArticle(articleId);
         if (article == null) {
             throw new InvalidArticleIdException();

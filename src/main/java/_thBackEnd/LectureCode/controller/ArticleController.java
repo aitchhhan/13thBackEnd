@@ -18,7 +18,6 @@ public class ArticleController {
 
     @PostMapping("/article/add")
     public ArticleDTO.ArticleRes createArticle(@RequestHeader("Authorization") String token, @RequestBody ArticleDTO.AddArticleReq request){
-        jwtUtility.validateJwt(token);
         String userId = jwtUtility.getClaimsFromJwt(token).getSubject();
         Article article = articleService.addArticle(userId, request.getTitle(), request.getContent());
         return new ArticleDTO.ArticleRes(article);
@@ -26,14 +25,12 @@ public class ArticleController {
 
     @PutMapping("/article/update")
     public ArticleDTO.ArticleRes updateArticle(@RequestHeader("Authorization") String token, @RequestBody ArticleDTO.ArticleReq request){
-        jwtUtility.validateJwt(token);
         Article article = articleService.updateArticle(request.getArticleId(), request.getTitle(), request.getContent(), token);
         return new ArticleDTO.ArticleRes(article);
     }
 
     @DeleteMapping("/article/{articleId}")
     public void deleteArticle(@RequestHeader("Authorization") String token, @PathVariable("articleId") Long articleId){
-        jwtUtility.validateJwt(token);
         articleService.deleteArticle(articleId, token);
     }
 

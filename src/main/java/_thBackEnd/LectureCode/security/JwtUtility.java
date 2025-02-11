@@ -22,13 +22,13 @@ public class JwtUtility {
     public JwtUtility(@Value("${jwt.base64Secret}") String base64Secret) { // @Value을 통해 application.yml에서 값 주입
         byte[] decodedKey = Base64.getDecoder().decode(base64Secret); // Base64로 인코딩된 문자열을 디코딩하여 바이트 배열로 변환
         this.secretKey = Keys.hmacShaKeyFor(decodedKey); // Keys.hmacShaKeyFor()는 JWT 서명을 위한 SecretKey 타입 비밀 키 객체를 반환
-    }                                                    // base64Secret이 64바이트 이상이면 자동으로 HS512 알고리즘 사용
+    }                                                    // base64Secret에 64qkdlxm 이상이면 자동으로 HS512 알고리즘 사용
 
     // JWT 생성
     public String generateJwt(String userId, RoleType roleType) {
         return Jwts.builder()
                 .setSubject(userId) // JWT의 주체로 userId 설정
-                .claim("role", roleType) // 클레임에 roleType 추가 // Key의 이름을 "role"로 하기!
+                .claim("role", roleType.name()) // 클레임에 roleType 추가 // Key의 이름을 "role"로 하기!
                 .setIssuedAt(new Date()) // JWT 생성 시점 설정
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // JWT 만료 시간 설정
                 .signWith(secretKey, SignatureAlgorithm.HS512) // 비밀 키로 서명 // 알아서 HS512 알고리즘을 사용하지만 명확하게 지정하는 것이 좋음
@@ -60,10 +60,15 @@ public class JwtUtility {
 
     // JWT에서 클레임 추출
     public Claims getClaimsFromJwt(String jwt) {
+        String NoneBearerJwt = jwt;
+        // "Bearer "로 시작하면
+        if (jwt.startsWith("Bearer ")) {
+            NoneBearerJwt = jwt.substring(7); // "Bearer " 부분을 제거
+        }
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
-                .parseClaimsJws(jwt)
+                .parseClaimsJws(NoneBearerJwt)
                 .getBody();  // JWT의 페이로드에서 클레임 반환
     }
 }

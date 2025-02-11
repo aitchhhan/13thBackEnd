@@ -48,11 +48,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String authorizationHeader  = request.getHeader("Authorization"); //  Authorization 헤더(JWT) 추출
 
         // Authorization 헤더가 없거나 "Bearer "로 시작하지 않으면 null 반환
-        if (authorizationHeader  == null || !authorizationHeader .startsWith("Bearer ")) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             return null;
         }
 
-        return authorizationHeader .substring(7); // "Bearer " 부분을 제거하고 JWT만 반환
+        return authorizationHeader.substring(7); // "Bearer " 부분을 제거하고 JWT만 반환
     }
 
     // 인증 객체 생성

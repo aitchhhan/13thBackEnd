@@ -28,8 +28,8 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("해당 userId를 찾을 수 없습니다: " + userId);
         }
 
-        // Role을 Spring Security의 GrantedAuthority(권한 객체)로 변환
-        GrantedAuthority authority = new SimpleGrantedAuthority(member.getRoleType().name());
+        // Role을 Spring Security의 GrantedAuthority(권한 객체)로 변환 // Spring Security는 역할을 ROLE_ 접두어가 붙은 형태로 관리
+        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + member.getRoleType().name());
 
         // member의 userId와 password, role이 담긴 권한 객체로 UserDetails 객체 생성
         return new User(member.getUserId(), member.getPassword(), List.of(authority));

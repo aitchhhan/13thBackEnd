@@ -24,10 +24,10 @@ public class Member {
 
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public Member(String userId, String password, RoleType roleType) {
+    public Member(String userId, String password) {
         this.userId = userId;
         this.setPassword(password);
-        this.roleType = roleType;
+        this.roleType = RoleType.MEMBER; // 회원가입시 기본적으로 Role을 MEMBER로 설정
     }
 
     public void setPassword(String password) {

@@ -28,14 +28,12 @@ public class CommentController {
                     @ApiResponse(responseCode = "404", description = "없는 articleId")})
     @PostMapping("/comment")
     public ResponseEntity<CommentDTO.ResComment> createComment(@RequestHeader("Authorization") String token, @RequestBody CommentDTO.CommentCreateReq request){
-        jwtUtility.validateJwt(token);
         Comment comment = commentService.saveComment(token, request.getArticleId(), request.getContent());
         return ResponseEntity.status(HttpStatus.CREATED).body(new CommentDTO.ResComment(comment));
     }
 
     @PutMapping("/comment")
     public ResponseEntity<CommentDTO.ResComment> updateComment(@RequestHeader("Authorization") String token, @RequestBody CommentDTO.CommentUpdateReq request){
-        jwtUtility.validateJwt(token);
         Comment comment = commentService.updateComment(request.getCommentId(), token, request.getContent());
         if(comment == null) return null;
         return ResponseEntity.status(HttpStatus.OK).body(new CommentDTO.ResComment(comment));
@@ -49,21 +47,9 @@ public class CommentController {
                 .map(CommentDTO.ResComment::new) // Comment 객체를 CommentDTO.ResComment 객체로 변환
                 .collect(Collectors.toList())); // 변환된 ResComment 객체들을 List로 수집(collect)하여 반환
     }
-//    @GetMapping("/comment/article/{id}")
-//    public ResponseEntity<List<CommentDTO.ResComment>> articleComment(@PathVariable("id") Long articleId) {
-//        List<CommentDTO.ResComment> response = new ArrayList<>();
-//        for (Comment comment : commentService.articleToComment(articleId)) {
-//            response.add(new CommentDTO.ResComment(comment));
-//
-//        }
-//        return ResponseEntity.status(HttpStatus.OK).body(response);
-//
-//    }
-
 
     @DeleteMapping("/comment")
     public ResponseEntity<Void> deleteComment(@RequestHeader("Authorization") String token, @RequestBody CommentDTO.CommentDeleteReq request) {
-        jwtUtility.validateJwt(token);
         commentService.deleteComment(request.getCommentId(), token);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
